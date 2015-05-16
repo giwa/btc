@@ -18,14 +18,13 @@ class CardDAO {
       "CID3\tMESSAGEghoe\tTYPE\tTag1,Tag2\t1234556\tOWNERhoge")
   }
 
-  private val cardFromFIle
-    = for(line <- Source.fromFile("/opt/btc/test.tsv").getLines) yield line
+  private val cardFromFile
+    = for(line <- Source.fromFile("/opt/btc/joined_card.tsv").getLines) yield line
 
   private val cards: Map[String, Card]= {
     val b = Map.newBuilder[String, Card]
-    for (c <- cards_str) {
-      Logger.info(c)
-      val a = c.split('\t')
+    for (c <- cardFromFile) {
+      val a = c.trim.split('\t')
       b += a(0) -> Card(a(0), a(1), a(2), a(3).split(',').toList, a(4).toLong, a(5))
     }
 
@@ -33,9 +32,11 @@ class CardDAO {
   }
 
   def getCard: String = {
-    cardFromFIle.foreach(Logger.info(_))
-    cards("CID3").message
+    cards("Cdfjqzx8")
   }
 
+  def getByID(cardID: String): Card = {
+    cards(cardID)
+  }
 
 }
