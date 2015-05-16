@@ -1,12 +1,14 @@
 package controllers
 
-import play.api._
+import models.CardDAO
 import play.api.mvc._
 
+
 object Application extends Controller {
+  val card_dao = new CardDAO()
 
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(card_dao.getCard)
   }
 
 }
