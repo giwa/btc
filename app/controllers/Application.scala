@@ -21,6 +21,7 @@ object Application extends Controller {
   // }
 
   def getCardsInBox(
+       limit: Int,
        findByIdEqual: Option[String],
        findByBoxCategoryEqual: Option[String],
        findByBoxPriorityGTE: Option[String],
@@ -32,16 +33,16 @@ object Application extends Controller {
 
     var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
     if (findByIdEqual.exists(_.trim.nonEmpty)) {
-      rd = rd.findByIdEqual(findByIdEqual.toString)
+      rd = rd.findByBoxIdEqual(findByIdEqual.toString)
     }
     if (findByBoxCategoryEqual.exists(_.trim.nonEmpty)) {
-      rd = rd.findByIdEqual(findByBoxCategoryEqual.toString)
+      rd = rd.findByBoxCategoryEqual(findByBoxCategoryEqual.toString)
     }
     if (findByBoxPriorityGTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByIdEqual(findByBoxPriorityGTE.toString)
+      rd = rd.findByBoxPriorityGTE(findByBoxPriorityGTE.toString.toLong)
     }
     if (findByBoxPriorityLTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByIdEqual(findByBoxPriorityLTE.toString)
+      rd = rd.findByBoxPriorityLTE(findByBoxPriorityLTE.toString.toLong)
     }
     if (findByCardTagsIncludeAll.exists(_.trim.nonEmpty)) {
       rd = rd.findByCardTagsIncludeAll(findByCardTagsIncludeAll.toString.split(',').toList)
@@ -56,10 +57,18 @@ object Application extends Controller {
       rd = rd.findByCardMetricsLTE(findByCardMetricsLTE.toString.toLong)
     }
 
-    Ok(Json.obj("result" -> true, "data" -> rd.getCardList()))
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit.toString.toInt)))
   }
 
   def is_empty(param: Option[String]): Boolean = {
     param.exists(_.trim.nonEmpty)
+  }
+
+  def getCardsInBox(
+                     limit: Int,
+                     findByBoxIdEqual: String) = Action {
+    var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
+    rd = rd.findByBoxIdEqual(findByBoxIdEqual.toString)
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit.toString.toInt)))
   }
 }

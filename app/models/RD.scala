@@ -20,9 +20,9 @@ class RD (
 
   def getByCardID(cardID: String): Card = _data(cardID)
 
-  def getCardList(): List[Card] = data.values.toList
+  def getCardList(limit: Int): List[Card] = data.values.toList.take(limit)
 
-  def findByIdEqual(box_id: String): RD = {
+  def findByBoxIdEqual(box_id: String): RD = {
     val cardIDs: Set[String] = _index.box2CardListIndex(box_id)
     val hm = new mutable.HashMap[String, Card]
     cardIDs.foreach(cardID => hm += cardID -> data(cardID))
@@ -30,7 +30,7 @@ class RD (
   }
 
   def findByBoxCategoryEqual(box_category: String): RD = {
-    val cardIDs: Set[String] = _index.boxCategory2CardListIndex(box_category)
+    val cardIDs: Set[String] = _index.boxCategory2CardListIndex(box_category.toString)
     val hm = new mutable.HashMap[String, Card]
     cardIDs.foreach(cardID => hm += cardID -> data(cardID))
     new RD(btcContext, hm, btc_index)
