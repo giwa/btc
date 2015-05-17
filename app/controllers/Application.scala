@@ -26,6 +26,7 @@ object Application extends Controller {
                         findByBoxCategoryEqual: String,
                         findByBoxPriorityGTE: Long,
                         findByBoxPriorityLTE: Long,
+                        findByCardTypeEqual: String,
                         findByCardTagsIncludeAll: List[String],
                         findByCardTagsIncludeAny: List[String],
                         findByCardMetricsGTE: Long,
@@ -47,6 +48,10 @@ object Application extends Controller {
 
     if (findByBoxPriorityLTE > 0) {
       rd = rd.findByBoxPriorityLTE(findByBoxPriorityLTE)
+    }
+
+    if (findByCardTypeEqual != "") {
+      rd = rd.findByCardTypeEqual(findByCardTypeEqual)
     }
 
     if (findByCardTagsIncludeAll != Nil) {

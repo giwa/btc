@@ -16,6 +16,13 @@ class BtcIndex {
   private val boxPriority2CardListIndexFile
     = for(line <- Source.fromFile("/opt/btc/priority2card.tsv").getLines) yield line
 
+  private val boxType2CardListIndexFile
+    = for(line <- Source.fromFile("/opt/btc/type2card.tsv").getLines) yield line
+
+  val type2CardListIndex: mutable.HashMap[String, Set[String]] = {
+    keySetConstructor(boxType2CardListIndexFile)
+  }
+
   val tagIndex: mutable.HashMap[String, Set[String]] = {
     keySetConstructor(tagIndexFile)
   }

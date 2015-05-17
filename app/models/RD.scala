@@ -61,7 +61,11 @@ class RD (
     this._tags = tags
     val cardIDs = _index.getCardIDByAnyTags(tags)
     val hm = new mutable.HashMap[String, Card]
-    cardIDs.foreach(cardID => hm += cardID -> data(cardID))
+    for (card <- cardIDs) {
+      if(data.exists(_ == card)){
+        hm += card -> data(card)
+      }
+    }
     new RD(btcContext, hm, btc_index)
   }
 
@@ -85,6 +89,16 @@ class RD (
     new RD(btcContext, hm, btc_index)
   }
 
+  def findByCardTypeEqual(card_type: String): RD = {
+    val cardIDs = _index.type2CardListIndex(card_type)
+    val hm = new mutable.HashMap[String, Card]
+    for (card <- cardIDs) {
+      if (data.exists(_ == card)){
+        hm += card -> data(card)
+      }
+    }
+    new RD(btcContext, hm, btc_index)
+  }
 /*
   def sortByBoxCategory(ordered:String, limit:Int): SortedRD = {
     // need make index
