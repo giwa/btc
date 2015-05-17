@@ -69,6 +69,30 @@ object Application extends Controller {
                      findByBoxIdEqual: String) = Action {
     var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
     rd = rd.findByBoxIdEqual(findByBoxIdEqual.toString)
-    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit.toString.toInt)))
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit)))
   }
+
+  def getCardInBoxT = Action  { implicit request =>
+    val params = request.queryString.map { case (k,v) => k -> v.mkString }
+
+    var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
+    if (params.exists(_ == "findByBoxIdEqual")) {
+      rd = rd.findByBoxIdEqual(params("findByBoxIdEqual"))
+    }
+    if (params.exists(_ == "findByBoxCategoryEqual")) {
+      rd = rd.findByBoxCategoryEqual(params("findByBoxCategoryEqual"))
+    }
+    if (params.exists(_ == "findByBoxPriorityGTE")) {
+      rd = rd.findByBoxPriorityGTE(params("findByBoxPriorityGTE").toLong)
+    }
+
+
+    Ok(Json.obj("result" -> true, "data" -> params("findByBoxIdEqual")))
+  }
+
+//  def getCardsInBox(limit: Int, findByBoxCategoryEqual: String): Unit = {
+//    var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
+//    rd = rd.findByBoxCategoryEqual(findByBoxCategoryEqual)
+//    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit)))
+//  }
 }

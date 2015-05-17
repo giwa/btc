@@ -6,6 +6,8 @@
 GET        /                    controllers.Application.index
 # GET        /listCardsInBox      controllers.Application.getCardsInBox(limit: Int, findByIdEqual: Option[String], findByBoxCategoryEqual: Option[String], findByBoxPriorityGTE: Option[String],findByBoxPriorityLTE: Option[String], findByCardTagsIncludeAll: Option[String], findByCardTagsIncludeAny: Option[String], findByCardMetricsGTE: Option[String],findByCardMetricsLTE: Option[String])
 GET        /listCardsInBox      controllers.Application.getCardsInBox(limit: Int, findByBoxIdEqual: String)
+GET        /listCardsInBox      controllers.Application.getCardsInBox(limit: Int, findByCategoryEqual: String)
+GET        /listCardsInBox2      controllers.Application.getCardInBoxT
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)

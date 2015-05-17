@@ -69,7 +69,7 @@ class RD (
     val hm = new mutable.HashMap[String, Card]
     for (r <- data.values) {
       if (r.metrics < metrics) {
-        hm += r.cardID -> r
+        hm += r.cardId -> r
       }
     }
     new RD(btcContext, hm, btc_index)
@@ -79,7 +79,7 @@ class RD (
     val hm = new mutable.HashMap[String, Card]
     for (r <- data.values) {
       if (r.metrics > metrics) {
-        hm += r.cardID -> r
+        hm += r.cardId -> r
       }
     }
     new RD(btcContext, hm, btc_index)
