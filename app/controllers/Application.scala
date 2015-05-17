@@ -20,45 +20,54 @@ object Application extends Controller {
   //   Ok(Json.obj("result" -> true, "data" -> rd.getByCardID(cardID)))
   // }
 
-  def getCardsInBox(
-       limit: Int,
-       findByIdEqual: Option[String],
-       findByBoxCategoryEqual: Option[String],
-       findByBoxPriorityGTE: Option[String],
-       findByBoxPriorityLTE: Option[String],
-       findByCardTagsIncludeAll: Option[String],
-       findByCardTagsIncludeAny: Option[String],
-       findByCardMetricsGTE: Option[String],
-       findByCardMetricsLTE: Option[String]) = Action {
-
+  def listGetCardInBox(
+                        limit: Int,
+                        findByBoxIdEqual: String,
+                        findByBoxCategoryEqual: String,
+                        findByBoxPriorityGTE: Long,
+                        findByBoxPriorityLTE: Long,
+                        findByCardTagsIncludeAll: List[String],
+                        findByCardTagsIncludeAny: List[String],
+                        findByCardMetricsGTE: Long,
+                        findByCardMetricsLTE: Long
+                        ) = Action {
     var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
-    if (findByIdEqual.exists(_.trim.nonEmpty)) {
-      rd = rd.findByBoxIdEqual(findByIdEqual.toString)
-    }
-    if (findByBoxCategoryEqual.exists(_.trim.nonEmpty)) {
-      rd = rd.findByBoxCategoryEqual(findByBoxCategoryEqual.toString)
-    }
-    if (findByBoxPriorityGTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByBoxPriorityGTE(findByBoxPriorityGTE.toString.toLong)
-    }
-    if (findByBoxPriorityLTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByBoxPriorityLTE(findByBoxPriorityLTE.toString.toLong)
-    }
-    if (findByCardTagsIncludeAll.exists(_.trim.nonEmpty)) {
-      rd = rd.findByCardTagsIncludeAll(findByCardTagsIncludeAll.toString.split(',').toList)
-    }
-    if (findByCardTagsIncludeAny.exists(_.trim.nonEmpty)) {
-      rd = rd.findByCardTagsIncludeAny(findByCardTagsIncludeAny.toString.split(',').toList)
-    }
-    if (findByCardMetricsGTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByCardMetricsGTE(findByCardMetricsGTE.toString.toLong)
-    }
-    if (findByCardMetricsLTE.exists(_.trim.nonEmpty)) {
-      rd = rd.findByCardMetricsLTE(findByCardMetricsLTE.toString.toLong)
+
+    if (findByBoxIdEqual != "") {
+      rd = rd.findByBoxIdEqual(findByBoxIdEqual)
     }
 
-    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit.toString.toInt)))
+    if (findByBoxCategoryEqual != "") {
+      rd = rd.findByBoxCategoryEqual(findByBoxCategoryEqual)
+    }
+
+    if (findByBoxPriorityGTE > 0) {
+      rd = rd.findByBoxPriorityGTE(findByBoxPriorityGTE)
+    }
+
+    if (findByBoxPriorityLTE > 0) {
+      rd = rd.findByBoxPriorityLTE(findByBoxPriorityLTE)
+    }
+
+    if (findByCardTagsIncludeAll != Nil) {
+      rd = rd.findByCardTagsIncludeAll(findByCardTagsIncludeAll)
+    }
+
+    if (findByCardTagsIncludeAny != Nil) {
+      rd = rd.findByCardTagsIncludeAny(findByCardTagsIncludeAny)
+    }
+
+    if (findByCardMetricsGTE > 0) {
+      rd = rd.findByCardMetricsGTE(findByCardMetricsGTE)
+    }
+
+    if (findByCardMetricsLTE > 0) {
+      rd = rd.findByCardMetricsGTE(findByCardMetricsLTE)
+    }
+
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit)))
   }
+
 
   def is_empty(param: Option[String]): Boolean = {
     param.exists(_.trim.nonEmpty)
@@ -72,22 +81,42 @@ object Application extends Controller {
     Ok(Json.obj("result" -> true, "data" -> rd.getCardList(limit)))
   }
 
-  def getCardInBoxT = Action  { implicit request =>
+  def getCardInBox = Action  { implicit request =>
     val params = request.queryString.map { case (k,v) => k -> v.mkString }
 
     var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
     if (params.exists(_ == "findByBoxIdEqual")) {
       rd = rd.findByBoxIdEqual(params("findByBoxIdEqual"))
     }
+
     if (params.exists(_ == "findByBoxCategoryEqual")) {
       rd = rd.findByBoxCategoryEqual(params("findByBoxCategoryEqual"))
     }
+
     if (params.exists(_ == "findByBoxPriorityGTE")) {
       rd = rd.findByBoxPriorityGTE(params("findByBoxPriorityGTE").toLong)
     }
 
+    if (params.exists(_ == "findByBoxPriorityLTE")) {
+      rd = rd.findByBoxPriorityLTE(params("findByBoxPriorityLTE").toLong)
+    }
 
-    Ok(Json.obj("result" -> true, "data" -> params("findByBoxIdEqual")))
+    if (params.exists(_ == "findByCardTagsIncludeAll")) {
+      rd = rd.findByCardTagsIncludeAll(params("findByCardTagsIncludeAll").split(',').toList)
+    }
+
+    if (params.exists(_ == "findByCardTagsIncludeAny")) {
+      rd = rd.findByCardTagsIncludeAll(params("findByCardTagsIncludeAny").split(',').toList)
+    }
+
+    if (params.exists(_ == "findByCardMetricsGTE")) {
+      rd = rd.findByCardMetricsGTE(params("findByCardMetricsGTE").toLong)
+    }
+    if (params.exists(_ == "findByCardMetricsGTE")) {
+      rd = rd.findByCardMetricsGTE(params("findByCardMetricsGTE").toLong)
+    }
+
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList(params("limit").toInt)))
   }
 
 //  def getCardsInBox(limit: Int, findByBoxCategoryEqual: String): Unit = {
