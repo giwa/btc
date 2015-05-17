@@ -1,24 +1,65 @@
 package controllers
 
-import models.CardDAO
-import models.Card
-
-import play.api.mvc._
+import models.{BtcIndex, Card, RD}
 import play.api.libs.json._
-
+import play.api.mvc._
+import services.BtcContext
 
 object Application extends Controller {
-  val card_dao = new CardDAO()
+  val bc = new BtcContext()
+  val btcIndex = new BtcIndex()
   implicit val cardFormat = Json.format[Card]
 
   def index = Action {
-    val card = card_dao.getCard
-    Ok(Json.obj("result" -> true, "data" -> card))
+    // val rd = new RD(bc, bc.cards, btcIndex)
+    Ok(Json.obj("result" -> true, "data" -> "ok"))
   }
 
-  def getCardByID(cardID: String) = Action {
-    val card = card_dao.getByID(cardID)
-    Ok(Json.obj("result" -> true, "data" -> card))
+  // def getCardByID(cardID: String) = Action {
+  //   val rd = new RD(bc, bc.cards, btcIndex)
+  //   Ok(Json.obj("result" -> true, "data" -> rd.getByCardID(cardID)))
+  // }
+
+  def getCardsInBox(
+       findByIdEqual: Option[String],
+       findByBoxCategoryEqual: Option[String],
+       findByBoxPriorityGTE: Option[String],
+       findByBoxPriorityLTE: Option[String],
+       findByCardTagsIncludeAll: Option[String],
+       findByCardTagsIncludeAny: Option[String],
+       findByCardMetricsGTE: Option[String],
+       findByCardMetricsLTE: Option[String]) = Action {
+
+    var rd = new RD(bc, bc.cardsInBoxs, btcIndex)
+    if (findByIdEqual.exists(_.trim.nonEmpty)) {
+      rd = rd.findByIdEqual(findByIdEqual.toString)
+    }
+    if (findByBoxCategoryEqual.exists(_.trim.nonEmpty)) {
+      rd = rd.findByIdEqual(findByBoxCategoryEqual.toString)
+    }
+    if (findByBoxPriorityGTE.exists(_.trim.nonEmpty)) {
+      rd = rd.findByIdEqual(findByBoxPriorityGTE.toString)
+    }
+    if (findByBoxPriorityLTE.exists(_.trim.nonEmpty)) {
+      rd = rd.findByIdEqual(findByBoxPriorityLTE.toString)
+    }
+    if (findByCardTagsIncludeAll.exists(_.trim.nonEmpty)) {
+      rd = rd.findByCardTagsIncludeAll(findByCardTagsIncludeAll.toString.split(',').toList)
+    }
+    if (findByCardTagsIncludeAny.exists(_.trim.nonEmpty)) {
+      rd = rd.findByCardTagsIncludeAny(findByCardTagsIncludeAny.toString.split(',').toList)
+    }
+    if (findByCardMetricsGTE.exists(_.trim.nonEmpty)) {
+      rd = rd.findByCardMetricsGTE(findByCardMetricsGTE.toString.toLong)
+    }
+    if (findByCardMetricsLTE.exists(_.trim.nonEmpty)) {
+      rd = rd.findByCardMetricsLTE(findByCardMetricsLTE.toString.toLong)
+    }
+
+    Ok(Json.obj("result" -> true, "data" -> rd.getCardList()))
   }
 
+  def is_empty(param: Option[String]): Boolean = {
+    param.exists(_.trim.nonEmpty)
+  }
 }
